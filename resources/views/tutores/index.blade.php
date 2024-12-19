@@ -37,7 +37,7 @@
 
                     <div class="mb-3">
                         <input type="text" class="form-control" id="searchInput"
-                               placeholder="Pesquise por nome, email ou telefone" onkeyup="searchTable()">
+                            placeholder="Pesquise por nome, email ou telefone" onkeyup="searchTable()">
                     </div>
 
                     <table id="tutorTable" class="table table-striped table-hover">
@@ -61,8 +61,8 @@
                                 @foreach($tutores as $tutor)
                                     <tr>
                                         <td>
-                                            <img src="{{ $tutor->foto_perfil }}" alt="Foto do Tutor" width="80" height="80"
-                                                 class="img-thumbnail rounded-circle">
+                                        <img src="{{ asset('storage/' . $tutor->foto_perfil) }}" alt="Foto do Tutor" width="100"
+                                        height="100" class="img-thumbnail rounded-circle">
                                         </td>
                                         <td>{{ $tutor->id }}</td>
                                         <td>{{ $tutor->nome }}</td>
@@ -81,22 +81,22 @@
                                             <a href="{{ route('tutor.edit', $tutor->id) }}" class="btn btn-sm btn-warning">
                                                 <i class="bi bi-pencil-square"></i> Editar
                                             </a>
-                                            
+
                                             <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                                    data-bs-target="#deleteModal{{ $tutor->id }}">
+                                                data-bs-target="#deleteModal{{ $tutor->id }}">
                                                 <i class="bi bi-trash"></i> Apagar
                                             </button>
 
                                             <!-- Modal de Exclusão -->
                                             <div class="modal fade" id="deleteModal{{ $tutor->id }}" tabindex="-1"
-                                                 aria-labelledby="deleteModalLabel{{ $tutor->id }}" aria-hidden="true">
+                                                aria-labelledby="deleteModalLabel{{ $tutor->id }}" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="deleteModalLabel{{ $tutor->id }}">
                                                                 Confirmar Exclusão</h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                    aria-label="Close"></button>
+                                                                aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
                                                             Tem certeza de que deseja excluir o tutor
@@ -105,9 +105,9 @@
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Cancelar</button>
+                                                                data-bs-dismiss="modal">Cancelar</button>
                                                             <form action="{{ route('tutor.delete', $tutor->id) }}"
-                                                                  method="POST">
+                                                                method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger">Apagar</button>

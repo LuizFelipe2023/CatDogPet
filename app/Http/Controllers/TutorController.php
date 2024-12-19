@@ -69,7 +69,7 @@ class TutorController extends Controller
             $validatedData = $this->validateRules($request);
 
             if ($request->hasFile('foto_perfil')) {
-                $fotoPerfilPath = $request->file('foto_perfil')->store('public/fotos_perfil');
+                $fotoPerfilPath = $request->file('foto_perfil')->store('public/fotos');
                 $validatedData['foto_perfil'] = $fotoPerfilPath;
             }
 
@@ -104,7 +104,7 @@ class TutorController extends Controller
                     Storage::delete($tutor->foto_perfil);
                 }
 
-                $fotoPerfilPath = $request->file('foto_perfil')->store('public/fotos_perfil');
+                $fotoPerfilPath = $request->file('foto_perfil')->store('public/fotos');
                 $validatedData['foto_perfil'] = $fotoPerfilPath;
             }
 
