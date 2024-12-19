@@ -61,13 +61,16 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="peso" class="form-label">Peso</label>
+                                <label for="peso" class="form-label">Peso (em gramas)</label>
                                 <input type="number" name="peso" id="peso" class="form-control"
-                                    placeholder="Digite o peso do pet" required value="{{ old('peso') }}">
+                                    placeholder="Digite o peso do pet" step="0.001" min="0" required
+                                    value="{{ old('peso') }}">
+                                <small class="text-muted">Digite o peso em gramas (exemplo: 0.500 para 500g)</small>
                                 @error('peso')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
+
                         </div>
 
                         <div class="row g-3 mb-4">
