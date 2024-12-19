@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Exception;
 use App\Models\Pet;
+use App\Models\Tutor;
 
 class PetController extends Controller
 {
@@ -54,32 +55,29 @@ class PetController extends Controller
             $pet = Pet::findOrFail($id);
             return view("pets.showPet", ["pet" => $pet]);
         } catch (ModelNotFoundException $e) {
-            return redirect()->route('pets.index')->withErrors(['error' => 'Pet não encontrado.']);
+            return redirect()->route('pet.index')->withErrors(['error' => 'Pet não encontrado.']);
         }
     }
 
     public function createPet()
     {
-        return view("pets.createPet");
+        $tutores = Tutor::all();
+        return view("pets.createPet",['tutores' => $tutores]);
     }
 
     public function storePet(Request $request)
     {
         try {
             $validatedData = $this->validateRules($request);
-
             if ($request->hasFile('foto_perfil') && $request->file('foto_perfil')->isValid()) {
                 $imagePath = $request->foto_perfil->store('pet_images', 'public');
                 $validatedData['foto_perfil'] = $imagePath;
             }
-
             $pet = Pet::create($validatedData);
-
             if (!$pet) {
                 return redirect()->back()->withErrors(['error' => 'Erro ao criar o pet.']);
             }
-
-            return redirect()->route('pets.index')->with('success', 'Pet criado com sucesso!');
+            return redirect()->route('pet.index')->with('success', 'Pet criado com sucesso!');
         } catch (ValidationException $e) {
             return redirect()->back()
                 ->withErrors($e->validator->errors())
@@ -92,10 +90,11 @@ class PetController extends Controller
     public function editPet($id)
     {
         try {
+            $tutores = Tutor::all();
             $pet = Pet::findOrFail($id);
-            return view("pets.editPet", ["pet" => $pet]);
+            return view("pets.editPet", ["pet" => $pet, "tutores" => $tutores]);
         } catch (ModelNotFoundException $e) {
-            return redirect()->route('pets.index')->withErrors(['error' => 'Pet não encontrado.']);
+            return redirect()->route('pet.index')->withErrors(['error' => 'Pet não encontrado.']);
         }
     }
 
@@ -104,7 +103,6 @@ class PetController extends Controller
         try {
             $validatedData = $this->validateRules($request);
             $pet = Pet::findOrFail($id);
-
             if ($request->hasFile('foto_perfil') && $request->file('foto_perfil')->isValid()) {
                 if ($pet->foto_perfil && \Storage::exists('public/' . $pet->foto_perfil)) {
                     \Storage::delete('public/' . $pet->foto_perfil);
@@ -113,18 +111,16 @@ class PetController extends Controller
                 $imagePath = $request->foto_perfil->store('pet_images', 'public');
                 $validatedData['foto_perfil'] = $imagePath;
             }
-
             $pet->update($validatedData);
-
             return redirect()->route('pets.index')->with('success', 'Pet atualizado com sucesso!');
         } catch (ValidationException $e) {
             return redirect()->back()
                 ->withErrors($e->validator->errors())
                 ->withInput();
         } catch (ModelNotFoundException $e) {
-            return redirect()->route('pets.index')->withErrors(['error' => 'Pet não encontrado.']);
+            return redirect()->route('pet.index')->withErrors(['error' => 'Pet não encontrado.']);
         } catch (Exception $e) {
-            return redirect()->route('pets.index')->withErrors(['error' => 'Ocorreu um erro inesperado: ' . $e->getMessage()]);
+            return redirect()->route('pet.index')->withErrors(['error' => 'Ocorreu um erro inesperado: ' . $e->getMessage()]);
         }
     }
 
@@ -133,12 +129,11 @@ class PetController extends Controller
         try {
             $pet = Pet::findOrFail($id);
             $pet->delete();
-
-            return redirect()->route('pets.index')->with('success', 'Pet deletado com sucesso!');
+            return redirect()->route('pet.index')->with('success', 'Pet deletado com sucesso!');
         } catch (ModelNotFoundException $e) {
-            return redirect()->route('pets.index')->withErrors(['error' => 'Pet não encontrado.']);
+            return redirect()->route('pet.index')->withErrors(['error' => 'Pet não encontrado.']);
         } catch (Exception $e) {
-            return redirect()->route('pets.index')->withErrors(['error' => 'Ocorreu um erro inesperado: ' . $e->getMessage()]);
+            return redirect()->route('pet.index')->withErrors(['error' => 'Ocorreu um erro inesperado: ' . $e->getMessage()]);
         }
     }
 }

@@ -52,7 +52,7 @@ class TutorController extends Controller
     {
         try {
             $tutor = Tutor::findOrFail($id);
-            return view("tutores.show", compact('tutor'));
+            return view("tutores.showTutor", compact('tutor'));
         } catch (ModelNotFoundException $e) {
             return redirect()->route('tutor.index')->withErrors(['error' => 'Tutor não encontrado.']);
         }

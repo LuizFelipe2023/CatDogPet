@@ -2,75 +2,67 @@
 
 @section("content")
 <div class="container">
-    <div class="row d-flex justify-content-evenly align-items-center">
+    <div class="row d-flex justify-content-center align-items-center mb-4">
         <div class="col-lg-12">
             <div class="card rounded-1 shadow-sm border-1">
                 <div class="card-body">
-                    <p class="text-center">Tutores</p>
+                    <p class="text-center display-5 font-weight-bold">Gestão de Tutores</p>
                     <div class="d-flex justify-content-end">
-                        <button class="btn btn-md btn-primary" type="button">Cadastrar um novo Tutor</button>
+                        <a href="{{ route('tutor.create') }}" class="btn btn-md btn-primary" role="button">
+                            Cadastrar um novo Tutor
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row d-flex justify-content-evenly align-items-center mt-5">
+    @if(session('success'))
+        <div class="alert alert-success mt-3">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger mt-3">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <div class="row d-flex justify-content-center align-items-center mt-5">
         <div class="col-lg-12">
             <div class="card rounded-1 shadow-sm border-1">
                 <div class="card-body">
-                    <p class="text-center">Lista de Tutores</p>
+                    <p class="text-center font-weight-bold">Lista de Tutores</p>
 
                     <div class="mb-3">
                         <input type="text" class="form-control" id="searchInput"
-                            placeholder="Pesquise por nome, email ou telefone" onkeyup="searchTable()">
+                               placeholder="Pesquise por nome, email ou telefone" onkeyup="searchTable()">
                     </div>
 
-                    <form method="GET" id="filterForm" onsubmit="applyFilters(event)">
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label for="filterNome">Nome</label>
-                                <input type="text" class="form-control" id="filterNome" name="filterNome"
-                                    placeholder="Filtrar por nome">
-                            </div>
-                            <div class="col">
-                                <label for="filterEmail">Email</label>
-                                <input type="email" class="form-control" id="filterEmail" name="filterEmail"
-                                    placeholder="Filtrar por email">
-                            </div>
-                            <div class="col">
-                                <label for="filterTelefone">Telefone</label>
-                                <input type="text" class="form-control" id="filterTelefone" name="filterTelefone"
-                                    placeholder="Filtrar por telefone">
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-md btn-primary">Aplicar Filtros</button>
-                        </div>
-                    </form>
-
-                    <table id="tutorTable" class="table table-striped">
+                    <table id="tutorTable" class="table table-striped table-hover">
                         <thead>
                             <tr>
-                                <th data-field="foto_perfil">Foto</th>
-                                <th data-field="id" data-sortable="true">ID</th>
-                                <th data-field="nome" data-sortable="true">Nome</th>
-                                <th data-field="email" data-sortable="true">Email</th>
-                                <th data-field="telefone" data-sortable="true">Telefone</th>
-                                <th data-field="acao">Ações</th>
+                                <th>Foto</th>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Telefone</th>
+                                <th>Pets</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody>
                             @if($tutores->isEmpty())
                                 <tr>
-                                    <td colspan="10" class="text-center">Não há Tutores cadastrados no sistema</td>
+                                    <td colspan="7" class="text-center">Não há Tutores cadastrados no sistema</td>
                                 </tr>
                             @else
                                 @foreach($tutores as $tutor)
                                     <tr>
                                         <td>
-                                            <img src="{{ $tutor->foto_perfil }}" alt="Foto do Pet" width="100" height="100"
-                                                class="img-thumbnail">
+                                            <img src="{{ $tutor->foto_perfil }}" alt="Foto do Tutor" width="80" height="80"
+                                                 class="img-thumbnail rounded-circle">
                                         </td>
                                         <td>{{ $tutor->id }}</td>
                                         <td>{{ $tutor->nome }}</td>
@@ -81,9 +73,49 @@
                                                 <span>Não há pets cadastrados</span>
                                             @else
                                                 @foreach($tutor->pets as $pet)
-                                                    <span>{{ $pet->nome }}</span>
+                                                    <span class="badge bg-secondary">{{ $pet->nome }}</span>
                                                 @endforeach
                                             @endif
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('tutor.edit', $tutor->id) }}" class="btn btn-sm btn-warning">
+                                                <i class="bi bi-pencil-square"></i> Editar
+                                            </a>
+                                            
+                                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                                                    data-bs-target="#deleteModal{{ $tutor->id }}">
+                                                <i class="bi bi-trash"></i> Apagar
+                                            </button>
+
+                                            <!-- Modal de Exclusão -->
+                                            <div class="modal fade" id="deleteModal{{ $tutor->id }}" tabindex="-1"
+                                                 aria-labelledby="deleteModalLabel{{ $tutor->id }}" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="deleteModalLabel{{ $tutor->id }}">
+                                                                Confirmar Exclusão</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Tem certeza de que deseja excluir o tutor
+                                                            <strong>{{ $tutor->nome }}</strong>? Essa ação não poderá ser
+                                                            desfeita.
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Cancelar</button>
+                                                            <form action="{{ route('tutor.delete', $tutor->id) }}"
+                                                                  method="POST">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-danger">Apagar</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -95,6 +127,7 @@
         </div>
     </div>
 </div>
+
 <script>
     function searchTable() {
         var input, filter, table, tr, td, i, txtValue;
@@ -115,50 +148,6 @@
                         tr[i].style.display = "none";
                     }
                 }
-            }
-        }
-    }
-
-    function applyFilters(event) {
-        event.preventDefault();
-
-        var nomeFilter = document.getElementById("filterNome").value.toUpperCase();
-        var emailFilter = document.getElementById("filterEmail").value.toUpperCase();
-        var telefoneFilter = document.getElementById("filterTelefone").value.toUpperCase();
-
-        var table, tr, td, i, j, txtValue;
-        table = document.getElementById("tutorTable");
-        tr = table.getElementsByTagName("tr");
-
-        for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td");
-            var showRow = true;
-
-            if (td[1]) {
-                txtValue = td[1].textContent || td[1].innerText;
-                if (nomeFilter && txtValue.toUpperCase().indexOf(nomeFilter) === -1) {
-                    showRow = false;
-                }
-            }
-
-            if (td[2]) {
-                txtValue = td[2].textContent || td[2].innerText;
-                if (emailFilter && txtValue.toUpperCase().indexOf(emailFilter) === -1) {
-                    showRow = false;
-                }
-            }
-
-            if (td[3]) {
-                txtValue = td[3].textContent || td[3].innerText;
-                if (telefoneFilter && txtValue.toUpperCase().indexOf(telefoneFilter) === -1) {
-                    showRow = false;
-                }
-            }
-
-            if (showRow) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
             }
         }
     }
