@@ -57,9 +57,9 @@
 
                         <div class="mb-4">
                             <label for="foto_perfil" class="form-label">Foto de Perfil</label>
-                            <input type="file" name="foto_perfil" id="foto_perfil" class="form-control" accept="image/*">
+                            <input type="file" name="foto" id="foto" class="form-control" accept="image/*">
                             <small class="text-muted">Formatos suportados: JPG, PNG. Tamanho máximo: 2MB.</small>
-                            @error('foto_perfil')
+                            @error('foto')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>

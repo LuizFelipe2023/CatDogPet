@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string("telefone");
             $table->string('email', 255)->unique();
             $table->string("endereco",500);
-            $table->string("foto_perfil")->nullable();
+            $table->string("foto")->nullable();
             $table->timestamps();
         });
     }

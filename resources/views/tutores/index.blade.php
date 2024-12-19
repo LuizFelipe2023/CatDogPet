@@ -61,7 +61,7 @@
                                 @foreach($tutores as $tutor)
                                     <tr>
                                         <td>
-                                        <img src="{{ asset('storage/' . $tutor->foto_perfil) }}" alt="Foto do Tutor" width="100"
+                                        <img src="{{ asset('storage/' . $tutor->foto) }}" alt="Foto do Tutor" width="100"
                                         height="100" class="img-thumbnail rounded-circle">
                                         </td>
                                         <td>{{ $tutor->id }}</td>
