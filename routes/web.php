@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AgendamentoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TutorController;
 use App\Http\Controllers\PetController;
@@ -35,5 +36,10 @@ Route::get('/pets/{id}', [PetController::class, 'showPet'])->name('pet.show');
 Route::get('/pets/{id}/edit', [PetController::class, 'editPet'])->name('pet.edit');
 Route::put('/pets/{id}', [PetController::class, 'updatePet'])->name('pet.update');
 Route::delete('/pets/{id}', [PetController::class, 'deletePet'])->name('pet.delete');
+
+
+Route::get('/agendamentos',[AgendamentoController::class,'index'])->name('agendamento.index');
+Route::get('/agendamento/create',[AgendamentoController::class,'create'])->name('agendamento.create');
+Route::post('/agendamento/store',[AgendamentoController::class,'store'])->name('agendamento.store');
 
 
