@@ -50,9 +50,9 @@
                             @else
                                 @foreach($pets as $pet)
                                     <tr>
-                                        <td>
-                                            <img src="{{ asset('storage/' . $pet->foto_perfil) }}" alt="Foto do Pet" width="100"
-                                                height="100" class="img-thumbnail rounded-circle">
+                                        <td class="text-center">
+                                            <img src="{{ asset('storage/' . $pet->foto_perfil) }}" alt="Foto do Pet"
+                                                 class="img-thumbnail rounded-circle" style="max-width: 80px; height: auto;">
                                         </td>
                                         <td>{{ $pet->id }}</td>
                                         <td>{{ $pet->nome }}</td>

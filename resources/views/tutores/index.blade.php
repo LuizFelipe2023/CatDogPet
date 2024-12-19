@@ -60,9 +60,9 @@
                             @else
                                 @foreach($tutores as $tutor)
                                     <tr>
-                                        <td>
-                                        <img src="{{ asset('storage/' . $tutor->foto) }}" alt="Foto do Tutor" width="100"
-                                        height="100" class="img-thumbnail rounded-circle">
+                                        <td style="width: 120px; text-align: center;">
+                                            <img src="{{ asset('storage/' . $tutor->foto) }}" alt="Foto do Tutor"
+                                                class="img-fluid rounded-circle" style="max-height: 100px; max-width: 100px;">
                                         </td>
                                         <td>{{ $tutor->id }}</td>
                                         <td>{{ $tutor->nome }}</td>

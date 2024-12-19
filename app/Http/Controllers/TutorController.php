@@ -34,9 +34,9 @@ class TutorController extends Controller
             'endereco.required' => 'O campo endereço é obrigatório.',
             'endereco.string' => 'O endereço deve ser uma string.',
             'endereco.max' => 'O endereço não pode ter mais de 500 caracteres.',
-            'foto_perfil.image' => 'A foto de perfil deve ser uma imagem.',
-            'foto_perfil.mimes' => 'A foto de perfil deve ser nos formatos: jpeg, png, jpg, gif.',
-            'foto_perfil.max' => 'A foto de perfil não pode ter mais de 10 MB.',
+            'foto.image' => 'A foto de perfil deve ser uma imagem.',
+            'foto.mimes' => 'A foto de perfil deve ser nos formatos: jpeg, png, jpg, gif.',
+            'foto.max' => 'A foto de perfil não pode ter mais de 10 MB.',
         ];
 
         return $request->validate($rules, $messages);
@@ -68,9 +68,10 @@ class TutorController extends Controller
         try {
             $validatedData = $this->validateRules($request);
 
-            if ($request->hasFile('foto_perfil')) {
-                $fotoPerfilPath = $request->file('foto_perfil')->store('public/fotos');
-                $validatedData['foto_perfil'] = $fotoPerfilPath;
+            if ($request->hasFile('foto')) {
+                $fotoOriginalName = $request->file('foto')->getClientOriginalName();
+                $fotoPerfilPath = $request->file('foto')->storeAs('public/fotos', $fotoOriginalName);
+                $validatedData['foto'] = 'fotos/' . $fotoOriginalName;
             }
 
             Tutor::create($validatedData);
@@ -82,6 +83,7 @@ class TutorController extends Controller
             return redirect()->back()->withErrors(['error' => 'Ocorreu um erro inesperado: ' . $e->getMessage()])->withInput();
         }
     }
+
 
     public function editTutor($id)
     {
@@ -98,18 +100,17 @@ class TutorController extends Controller
         try {
             $validatedData = $this->validateRules($request, $id);
             $tutor = Tutor::findOrFail($id);
-
-            if ($request->hasFile('foto_perfil')) {
-                if ($tutor->foto_perfil && Storage::exists($tutor->foto_perfil)) {
-                    Storage::delete($tutor->foto_perfil);
+            if ($request->hasFile('foto')) {
+                if ($tutor->foto && Storage::exists('public/' . $tutor->foto)) {
+                    Storage::delete('public/' . $tutor->foto);
                 }
-
-                $fotoPerfilPath = $request->file('foto_perfil')->store('public/fotos');
-                $validatedData['foto_perfil'] = $fotoPerfilPath;
+                $fotoOriginalName = $request->file('foto')->getClientOriginalName();
+                $fotoPerfilPath = $request->file('foto')->storeAs('public/fotos', $fotoOriginalName);
+                $validatedData['foto'] = 'fotos/' . $fotoOriginalName;
             }
-
+    
             $tutor->update($validatedData);
-
+    
             return redirect()->route('tutor.index')->with('success', 'Tutor atualizado com sucesso!');
         } catch (ValidationException $e) {
             return redirect()->back()->withErrors($e->validator->errors())->withInput();
@@ -119,7 +120,7 @@ class TutorController extends Controller
             return redirect()->back()->withErrors(['error' => 'Ocorreu um erro inesperado: ' . $e->getMessage()])->withInput();
         }
     }
-
+    
     public function destroyTutor($id)
     {
         try {

@@ -62,21 +62,26 @@ class PetController extends Controller
     public function createPet()
     {
         $tutores = Tutor::all();
-        return view("pets.createPet",['tutores' => $tutores]);
+        return view("pets.createPet", ['tutores' => $tutores]);
     }
 
     public function storePet(Request $request)
     {
         try {
             $validatedData = $this->validateRules($request);
+
             if ($request->hasFile('foto_perfil') && $request->file('foto_perfil')->isValid()) {
-                $imagePath = $request->foto_perfil->store('pet_images', 'public');
+                $originalFileName = $request->foto_perfil->getClientOriginalName();
+                $imagePath = $request->foto_perfil->storeAs('pet_images', $originalFileName, 'public');
                 $validatedData['foto_perfil'] = $imagePath;
             }
+
             $pet = Pet::create($validatedData);
+
             if (!$pet) {
                 return redirect()->back()->withErrors(['error' => 'Erro ao criar o pet.']);
             }
+
             return redirect()->route('pet.index')->with('success', 'Pet criado com sucesso!');
         } catch (ValidationException $e) {
             return redirect()->back()
@@ -86,6 +91,7 @@ class PetController extends Controller
             return redirect()->back()->withErrors(['error' => 'Ocorreu um erro inesperado: ' . $e->getMessage()]);
         }
     }
+
 
     public function editPet($id)
     {
@@ -103,15 +109,18 @@ class PetController extends Controller
         try {
             $validatedData = $this->validateRules($request);
             $pet = Pet::findOrFail($id);
+
             if ($request->hasFile('foto_perfil') && $request->file('foto_perfil')->isValid()) {
                 if ($pet->foto_perfil && \Storage::exists('public/' . $pet->foto_perfil)) {
                     \Storage::delete('public/' . $pet->foto_perfil);
                 }
-
-                $imagePath = $request->foto_perfil->store('pet_images', 'public');
+                $originalFileName = $request->foto_perfil->getClientOriginalName();
+                $imagePath = $request->foto_perfil->storeAs('pet_images', $originalFileName, 'public');
                 $validatedData['foto_perfil'] = $imagePath;
             }
+
             $pet->update($validatedData);
+
             return redirect()->route('pets.index')->with('success', 'Pet atualizado com sucesso!');
         } catch (ValidationException $e) {
             return redirect()->back()
@@ -123,6 +132,7 @@ class PetController extends Controller
             return redirect()->route('pet.index')->withErrors(['error' => 'Ocorreu um erro inesperado: ' . $e->getMessage()]);
         }
     }
+
 
     public function deletePet($id)
     {
